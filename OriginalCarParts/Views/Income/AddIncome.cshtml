@@ -1,0 +1,57 @@
+﻿                        <h1>СТРАНИЦА В СТАДИИИ РАЗРАБОТКИ!</h1>
+
+@model IEnumerable<OriginalCarParts.Models.OnePrice>
+@{
+    ViewBag.Title = "AddIncome";
+}
+
+<script>
+    $(document).ready(function() {
+        var table = $('#items_list').DataTable();
+
+        $('#items_list tbody').on( 'click', 'tr', function () {
+           $(this).toggleClass('selected');
+        } );
+ 
+        $('#btn').click(function () {
+            //var tr = $(this).closest('tr');
+            //var row = dt.row(tr);
+            //alert(row.data() + 'data');
+            //var row = $(this).parents('tr')[0];
+            //alert(table.row(row).data());
+            alert(table.row('.selected').data());
+        } );
+    });
+
+   
+
+</script>
+
+<h2>AddIncome</h2>
+
+
+
+<h2>Item:</h2>
+<button id="btn">btn</button>
+<table id="items_list" class="stripe" width="100%">
+    <thead>
+        <tr>
+            <th>Code</th>
+            <th>Description</th>
+            <th>Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var item in Model)
+        {
+        <tr>
+            <td>@item.Code</td>
+            <td>@item.Description</td>
+            <td>@item.Price</td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+
+

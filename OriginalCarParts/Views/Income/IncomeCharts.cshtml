@@ -1,0 +1,69 @@
+﻿
+@{
+	ViewBag.Title = "IncomeCharts";
+}
+
+@* Гистограмма *@
+<div id="chartContainer1" style="width: 100%; height: 450px;display: inline-block;"></div>
+<br />
+<br />
+@* Круговая диаграмма *@
+<div id="chartContainer2"  style="width: 100%; height: 400px;display: inline-block;"></div>
+
+<script type="text/javascript">
+    var date = new Date();
+    $(function () {
+			var chart1 = new CanvasJS.Chart("chartContainer1", {
+			theme: "dark2",
+			exportEnabled: true,
+			animationEnabled: true,
+			title: {
+				text: "All suppliers"
+			},
+					subtitles: [{
+						text: date.toLocaleString()
+					}],
+					axisX: {
+						interval: 1,
+						//viewportMinimum: 0,
+						labelFontSize: 12,
+                },
+				dataPointWidth: 7,
+				data: [
+                    {
+						type: "bar",
+						dataPoints: @Html.Raw(ViewBag.DataPointsBar),
+					}
+					]
+			});
+
+
+        chart1.render();
+
+			var chart2 = new CanvasJS.Chart("chartContainer2", {
+			theme: "dark2",
+			exportEnabled: true,
+			animationEnabled: true,
+			title: {
+				text: "Top 5 suppliers"
+			},
+					subtitles: [{
+						text: date.toLocaleString()
+			}],
+				data: [
+				{
+					type: "pie",
+					startAngle: 180,
+					toolTipContent: "<b>{label}</b>: {y}%",
+					showInLegend: "true",
+					legendText: "{label}",
+					indexLabel: "{label} - {y}%",
+					dataPoints: @Html.Raw(ViewBag.DataPointsPie),
+				}
+				]
+			});
+
+
+			chart2.render();
+		});
+</script>

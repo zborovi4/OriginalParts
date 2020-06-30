@@ -1,0 +1,146 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<script>
+    function format(id) {
+        var div = $('<div/>')
+            .addClass('loading')
+            .text('Loading...');
+
+        $.ajax({
+            type: 'POST',
+            url: '/Income/GetIncomeDetails',
+            data: { id: id.IncomeId },
+            dataType: 'json',
+            async: false,
+            success: function (data) {
+                div.empty();
+                div.append(data);
+                div.removeClass('loading');
+
+            }
+        });
+        return div;
+    }
+
+     function del(id) {
+            $.ajax({
+                type: 'POST',
+                url: '/Income/Delete',
+                data: { id: id.IncomeId },
+                dataType: 'json',
+                async: false,
+                success: function (data) {
+                }
+            });
+     }
+
+    $(document).ready(function () {
+        var dt = $('#incomes_list').DataTable({
+            ajax: {
+                type: 'GET',
+                url: '/Income/Incomes',
+                dataSrc: function (data) {
+                    return data;
+                }
+            },
+            columns: [
+                {
+                    className: 'details-control',
+                    orderable: false,
+                    data: null,
+                    defaultContent: ''
+                },
+                { data: "IncomeId" },
+                { data: "Date" },
+                { data: "Vendor" },
+                { data: "NumberOfLine" },
+                { data: "SumIncome" }
+            ],
+            order: [1, 'asc']
+        });
+
+        var detailRows = [];
+
+        $('#incomes_list tbody').on('click', 'tr td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = dt.row(tr);
+            var idx = $.inArray(tr.attr('id'), detailRows);
+
+            if (row.child.isShown()) {
+                tr.removeClass('details');
+                row.child.hide();
+
+
+                detailRows.splice(idx, 1);
+            }
+            else {
+                tr.addClass('details');
+                row.child(format(row.data())).show();
+
+
+                if (idx === -1) {
+                    detailRows.push(tr.attr('id'));
+                }
+            }
+        });
+
+        dt.on('draw', function () {
+            $.each(detailRows, function (i, id) {
+                $('#' + id + ' td.details-control').trigger('click');
+            });
+        });
+
+        $('#incomes_list tbody').on('click', 'tr', function () {
+            if ($(this).hasClass('selected')) {
+                $(this).removeClass('selected');
+            }
+            else {
+                dt.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            };
+
+            $('#btn_delete').click(function () {
+                var row = dt.row('.selected').data();
+                var result = confirm("Delete permanently selected record?");
+                if (result) {
+                    del(row);
+                    dt.row('.selected').remove().draw(false);
+                } else {
+                    return false;
+                }           
+            })
+        }); 
+    });
+
+</script>
+
+<h2>Incomes</h2>
+
+@using (Html.BeginForm("AddIncome", "Income", FormMethod.Post))
+{
+    @Html.DropDownList("vendorId", ViewBag.Vendors as List<SelectListItem>)
+    <button type="submit" disabled>Add income (разрабатывается)</button>
+    
+}
+@*@if (User.Identity.Name == "admin@gmail.com")*@
+@*{*@
+<button type="button" id="btn_delete">Delete</button>
+@*}*@
+
+    <table id="incomes_list" class="stripe" width="100%">
+        <thead>
+            <tr>
+                <th></th>
+                <th>IncomeId</th>
+                <th>Incoming date</th>
+                <th>Vendor</th>
+                <th>Number of lines</th>
+                <th>Order price ₴</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>

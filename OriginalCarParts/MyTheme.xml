@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Chart>
+  <Series>
+    <Series Name="Series1" IsValueShownAsLabel="True" LabelFormat="F2" ChartType="Bar" CustomProperties="BarLabelStyle=Right" Palette="EarthTones"/>
+  </Series>
+  <ChartAreas>
+    <ChartArea Name="Default">
+      
+      <AxisX IsLabelAutoFit="true">
+        <LabelStyle Angle="-90" Interval="1"></LabelStyle>
+      </AxisX>
+    </ChartArea>
+  </ChartAreas>
+</Chart>
